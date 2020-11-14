@@ -22,24 +22,7 @@
           </dl>
         </b-col>
         <b-col>
-          <b-carousel
-            id="carousel-1"
-            v-model="slide"
-            :interval="0"
-            controls
-            indicators
-            img-height="480"
-            img-width="1024"
-            background="#ababab"
-            style="text-shadow: 1px 1px 2px #333;"
-            @sliding-start="onSlideStart"
-            @sliding-end="onSlideEnd"
-          >
-            <template v-for="img in wineData.vinmonopoletData.images" >
-                <b-carousel-slide :img-src="img.url" :key="img.url"/>
-            </template>
-            <!-- Text slides with image -->
-          </b-carousel>
+            <b-img thumbnail fluid :src=" wineData.vinmonopoletData.images[0].url" alt="Image 1" :height="400"></b-img>
         </b-col>
       </b-row>
     </div>
@@ -66,12 +49,3 @@ export default {
   },
 };
 </script>
-
-<style>
-    .carousel-item img {
-          display: block;
-        max-height:500px;
-        width: auto;
-        height: auto;
-    }
-</style>
