@@ -17,7 +17,7 @@
       <b-col>
         <b-row class="my-1">
           <b-col sm="5">
-            <label for="input-minimumPoints">Minimum point score:</label>
+            <label for="input-minimumPoints">Minimum points:</label>
           </b-col>
           <b-col sm="7">
             <b-form-input
