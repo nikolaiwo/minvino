@@ -3,7 +3,7 @@
     <div v-if="!fetchingWineData">
       <h1>{{ wineData.vinmonopoletData.name }}</h1>
       <b-row>
-        <b-col>
+        <b-col sm="10">
           <dl class="row">
             <dt class="col-sm-3">DN</dt>
             <dd class="col-sm-9">
@@ -19,10 +19,25 @@
               </div>
               <div v-else>Ingen rating funnet</div>
             </dd>
+            <dt class="col-sm-3">Link til Vinmonopolet</dt>
+            <dd class="col-sm-9">
+              <a
+                :href="
+                  'https://www.vinmonopolet.no/' + wineData.vinmonopoletData.url
+                "
+              >
+                {{ wineData.vinmonopoletData.name }}
+              </a>
+            </dd>
           </dl>
         </b-col>
-        <b-col>
-            <b-img thumbnail fluid :src=" wineData.vinmonopoletData.images[0].url" alt="Image 1" :height="400"></b-img>
+        <b-col sm="2">
+          <b-img
+            thumbnail
+            fluid
+            :src="wineData.vinmonopoletData.images[0].url"
+            alt="Image 1"
+          ></b-img>
         </b-col>
       </b-row>
     </div>
@@ -36,16 +51,16 @@ import { mapState } from "vuex";
 export default {
   name: "SingleWineView",
   props: {
-    articleNumber: String,
+    articleNumber: String
   },
   computed: {
     ...mapState({
-      wineData: (state) => state.db.wineData,
-      fetchingWineData: (state) => state.db.fetchingWineData,
-    }),
+      wineData: state => state.db.wineData,
+      fetchingWineData: state => state.db.fetchingWineData
+    })
   },
   created() {
     this.$store.dispatch("db/fetchWineData", this.articleNumber);
-  },
+  }
 };
 </script>

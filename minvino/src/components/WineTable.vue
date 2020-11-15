@@ -13,6 +13,7 @@
     <b-table
       ref="wineTable"
       responsive="sm"
+      hover
       selectable
       :items="filteredWineTableData"
       :fields="fields"

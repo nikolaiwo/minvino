@@ -9,7 +9,7 @@ const state = {
   wineTableCategories: new Set(),
   fetchingWineTableData: false,
   wineData: {},
-  fetchingWineData: false
+  fetchingWineData: false,
 };
 
 const getters = {
@@ -128,7 +128,7 @@ const actions = {
     commit("setWineData", {});
     commit("setFetchingWineData", true);
     let data = {
-        query: `
+      query: `
           {
             wineData(
                 query: {
@@ -155,6 +155,7 @@ const actions = {
                     volume {
                         value
                     }
+                    url
                   }
               dnPoints
               apertifPoints
@@ -164,8 +165,7 @@ const actions = {
               productId
             }
           }`,
-      };
-
+    };
 
     // Refresh the token before fetching
     if (!getters.isAuthenticated) {
@@ -188,20 +188,20 @@ const actions = {
       .then((response) => {
         commit("setWineData", response.data.data.wineData[0]);
         commit("setFetchingWineData", false);
-        console.log(response)
+        console.log(response);
       })
-      .catch(function(error) {
+      .catch((error) => {
         commit("setFetchingWineData", false);
         console.log(error);
       });
-  }
+  },
 };
 
 const mutations = {
   setApp(state, app) {
     state.app = app;
   },
-  setFetchingWineTableData(state, value){
+  setFetchingWineTableData(state, value) {
     state.fetchingWineTableData = value;
   },
   setWineTableCategories(state, wineTableCategories) {
@@ -210,10 +210,10 @@ const mutations = {
   setWineTableData(state, wineTableData) {
     state.wineTableData = wineTableData;
   },
-  setWineData(state, wineData){
-      state.wineData = wineData;
+  setWineData(state, wineData) {
+    state.wineData = wineData;
   },
-  setFetchingWineData(state, value){
+  setFetchingWineData(state, value) {
     state.fetchingWineData = value;
   },
   setUser(state, username) {
