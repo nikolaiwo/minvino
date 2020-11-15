@@ -6,7 +6,7 @@ const state = {
   user: null,
   app: null,
   wineTableData: [],
-  wineTableCategories: new Set(),
+  wineTableCategories: [],
   fetchingWineTableData: false,
   wineData: {},
   fetchingWineData: false,
@@ -35,52 +35,105 @@ const actions = {
       await commit("setUser", user);
     }
   },
-  async fetchBaseWineData({ dispatch }) {
-    let data = {
-      query: `
-        {
-          wineData(
-              sortBy: SCORE_DESC
-              query: {
-                AND: [
-                    {vinmonopoletData: {
-                        buyable: true,
-                    }}
-                    {
-                        OR: [
-                            {dnPoints_gt: "90"},
-                            {apertifPoints_gt: "90"}
-                        ]
+  async fetchBaseWineData({ dispatch }, {category, minimumPoints}) {
+    if (!category) {
+      let data = {
+        query: `
+              {
+                wineData(
+                    sortBy: SCORE_DESC
+                    query: {
+                      AND: [
+                          {vinmonopoletData: {
+                              buyable: true,
+                          }}
+                          {
+                              OR: [
+                                  {dnPoints_gt: "${minimumPoints}"},
+                                  {apertifPoints_gt: "${minimumPoints}"}
+                              ]
+                          }
+                      ]
+                  }
+                    limit:100
+                  ){
+                  vinmonopoletData {
+                    name,
+                    price {
+                      value
+                    },
+                    main_category {
+                      name
+                    },
+                    main_sub_category {
+                      name
+                    },
+                    volume {
+                        value
                     }
-                ]
-            }
-              limit:1000
-            ){
-            vinmonopoletData {
-              name,
-              price {
-                value
-              },
-              main_category {
-                name
-              },
-              main_sub_category {
-                name
-              },
-              volume {
-                  value
-              }
-            }
-            dnPoints
-            apertifPoints
-            dnTasteNote
-            apertifTasteNote
-            score
-            productId
-          }
-        }`,
-    };
-    dispatch("fetchWineTableData", data);
+                  }
+                  dnPoints
+                  apertifPoints
+                  dnTasteNote
+                  apertifTasteNote
+                  score
+                  productId
+                }
+              }`,
+      };
+      dispatch("fetchWineTableData", data);
+    } else {
+      console.log("Fetching data for category " + category);
+      let data = {
+        query: `
+              {
+                wineData(
+                    sortBy: SCORE_DESC
+                    query: {
+                      AND: [
+                          {
+                              vinmonopoletData: {
+                                buyable: true,
+                                main_category: {
+                                    name: "${category}"
+                                }
+                          }}
+                          {
+                            OR: [
+                                {dnPoints_gt: "${minimumPoints}"},
+                                {apertifPoints_gt: "${minimumPoints}"}
+                            ]
+                            }
+                      ]
+                  }
+                    limit:100
+                  ){
+                  vinmonopoletData {
+                    name,
+                    price {
+                      value
+                    },
+                    main_category {
+                      name
+                    },
+                    main_sub_category {
+                      name
+                    },
+                    volume {
+                        value
+                    }
+                  }
+                  dnPoints
+                  apertifPoints
+                  dnTasteNote
+                  apertifTasteNote
+                  score
+                  productId
+                }
+              }`,
+      };
+      dispatch("fetchWineTableData", data);
+    }
   },
   async fetchWineTableData({ commit, getters, dispatch }, data) {
     commit("setWineTableData", []);
@@ -114,13 +167,53 @@ const actions = {
           element.volume = element.vinmonopoletData.volume.value;
           delete element.vinmonopoletData;
         });
-        console.log(response.data.data.wineData.length);
+        console.log(response);
         commit("setFetchingWineTableData", false);
-        commit("setWineTableCategories", categories);
         commit("setWineTableData", items);
       })
       .catch(function(error) {
         commit("setFetchingWineTableData", false);
+        console.log(error);
+      });
+  },
+  async fetchWineTableCategories({ commit, getters, dispatch }) {
+    console.log("fetching wine categories");
+    commit("setWineTableCategories", []);
+    // Refresh the token before fetching
+    if (!getters.isAuthenticated) {
+      await dispatch("logIn");
+    }
+    await state.app.currentUser.refreshCustomData();
+    // unuqieCategories is added as a server-side
+    // custom resolver, thad does a distinc lookup in
+    // wineData.vinmonopoletData.main_category.name
+    let data = {
+      query: `
+          {
+            wineDatum{
+                uniqueCategories
+            }
+          }`,
+    };
+
+    let conf = {
+      headers: {
+        Authorization: `Bearer ${state.app.currentUser.accessToken}`,
+      },
+    };
+
+    axios
+      .post(
+        "https://realm.mongodb.com/api/client/v2.0/app/minvino-aiide/graphql",
+        data,
+        conf,
+      )
+      .then((response) => {
+        let categories = response.data.data.wineDatum.uniqueCategories;
+        console.log(response.data);
+        commit("setWineTableCategories", categories);
+      })
+      .catch(function(error) {
         console.log(error);
       });
   },

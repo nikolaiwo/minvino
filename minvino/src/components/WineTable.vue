@@ -1,15 +1,35 @@
 <template>
   <div>
-    <b-form-select
-      v-model="selectedCategory"
-      :options="Array.from(wineTableCategories)"
-    >
-      <template #first>
-        <b-form-select-option :value="null" disabled
-          >Filter by category</b-form-select-option
+    <b-row>
+      <b-col>
+        <b-form-select
+          v-model="selectedCategory"
+          :options="wineTableCategories"
+          @change="fetchFilteredData"
         >
-      </template>
-    </b-form-select>
+          <template #first>
+            <b-form-select-option :value="null" disabled
+              >Filter by category</b-form-select-option
+            >
+          </template>
+        </b-form-select>
+      </b-col>
+      <b-col>
+        <b-row class="my-1">
+          <b-col sm="5">
+            <label for="input-minimumPoints">Minimum point score:</label>
+          </b-col>
+          <b-col sm="7">
+            <b-form-input
+              id="input-minimumPoints"
+              v-model="minimumPoints"
+              :state="Number.isInteger(parseInt(minimumPoints))"
+              @change="fetchFilteredData"
+            ></b-form-input>
+          </b-col>
+        </b-row>
+      </b-col>
+    </b-row>
     <b-table
       ref="wineTable"
       responsive="sm"
@@ -17,8 +37,12 @@
       selectable
       :items="filteredWineTableData"
       :fields="fields"
-      @row-clicked="viewSingleComponent" 
-    />
+      @row-clicked="viewSingleComponent"
+    >
+    <template #cell(score)="row">
+        {{ (row.value*100).toFixed(2)}}
+      </template>
+    </b-table>
     <b-spinner v-if="fetchingData" label="Loading..."></b-spinner>
   </div>
 </template>
@@ -52,7 +76,7 @@ export default {
           sortable: true,
         },
         {
-            key: "volume"
+          key: "volume",
         },
         {
           key: "score",
@@ -64,14 +88,31 @@ export default {
       app: null,
       collection: null,
       selectedCategory: null,
+      minimumPoints: 90,
       items: [],
+      wineTableCategories: [
+        "Sterkvin",
+        "Rødvin",
+        "Musserende vin",
+        "Hvitvin",
+        "Brennevin",
+        "Øl",
+        "Rosévin",
+        "Sake",
+        "Sider",
+        "Perlende vin",
+        "Fruktvin",
+        "Mjød",
+        "Alkoholfritt",
+        "Aromatisert vin",
+      ],
     };
   },
   computed: {
     ...mapState({
       wineTableData: (state) => state.db.wineTableData,
-      wineTableCategories: (state) => state.db.wineTableCategories,
-      fetchingData: (state) => state.db.fetchingWineTableData
+      //   wineTableCategories: (state) => state.db.wineTableCategories,
+      fetchingData: (state) => state.db.fetchingWineTableData,
     }),
     filteredWineTableData() {
       let filteredArray = [];
@@ -87,17 +128,29 @@ export default {
       return filteredArray;
     },
   },
-  methods:{
-      viewSingleComponent(row) {
-          console.log(row);
-        this.$router
-        .push({
-            path: `/wine/${row.productId}`
-        });
-      }
+  methods: {
+    viewSingleComponent(row) {
+      console.log(row);
+      this.$router.push({
+        path: `/wine/${row.productId}`,
+      });
+    },
+    fetchFilteredData() {
+      let data = {
+        category: this.selectedCategory,
+        minimumPoints: this.minimumPoints,
+      };
+      this.$store.dispatch("db/fetchBaseWineData", data);
+    },
+    inputChange(){
+        console.log("input change")
+    }
   },
   async created() {
-    this.$store.dispatch("db/fetchBaseWineData")
+    // this.$store.dispatch("db/fetchWineTableCategories");
+    this.$store.dispatch("db/fetchBaseWineData", {
+      minimumPoints: this.minimumPoints,
+    });
   },
 };
 </script>
