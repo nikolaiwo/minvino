@@ -7,8 +7,11 @@
           <dl class="row">
             <dt class="col-sm-3">DN</dt>
             <dd class="col-sm-9">
-              <b>{{ wineData.dnPoints }} Poeng </b><br />
-              {{ wineData.dnTasteNote }}
+                 <div v-if="wineData.dnPoints != ''">
+                <b>{{ wineData.dnPoints }} Poeng</b> <br />
+                {{ wineData.dnTasteNote }}
+              </div>
+              <div v-else>Ingen rating funnet</div>
             </dd>
 
             <dt class="col-sm-3">Apertif</dt>
@@ -64,3 +67,12 @@ export default {
   }
 };
 </script>
+
+<style scoped>
+    dt {
+        text-align: right;
+    }
+    dd {
+        text-align: left;
+    }
+</style>
