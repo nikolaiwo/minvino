@@ -35,6 +35,8 @@
       responsive="sm"
       hover
       selectable
+      :sort-by.sync="sortBy"
+      :sort-desc.sync="sortDesc"
       :items="filteredWineTableData"
       :fields="fields"
       @row-clicked="viewSingleComponent"
@@ -89,6 +91,8 @@ export default {
       collection: null,
       selectedCategory: null,
       minimumPoints: 90,
+      sortBy:"score",
+      sortDesc: true,
       items: [],
       wineTableCategories: [
         "Sterkvin",
