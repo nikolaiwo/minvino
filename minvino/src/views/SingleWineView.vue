@@ -32,6 +32,8 @@
                 {{ wineData.vinmonopoletData.name }}
               </a>
             </dd>
+            <dt class="col-sm-3">Pris</dt>
+            <dd class="col-sm-9">{{ wineData.vinmonopoletData.price.value.toFixed(2) }} kr</dd>
             <dt class="col-sm-3">Kategori</dt>
             <dd class="col-sm-9">{{ wineData.vinmonopoletData.main_category.name }}</dd>
             <dt class="col-sm-3">Volum</dt>
@@ -39,8 +41,8 @@
             <dt class="col-sm-3">Land, område</dt>
             <dd class="col-sm-9">
               {{ wineData.vinmonopoletData.main_country.name }}
-              <span v-if="wineData.vinmonopoletData.district != null">, {{ wineData.vinmonopoletData.district.name }}</span>
-              <span v-if="wineData.vinmonopoletData.sub_District != null">, {{ wineData.vinmonopoletData.sub_District.name }}</span>
+              <span v-if="wineData.vinmonopoletData.district != null && wineData.vinmonopoletData.district.name != 'Øvrige' && wineData.vinmonopoletData.district.name != '-'">, {{ wineData.vinmonopoletData.district.name }}</span>
+              <span v-if="wineData.vinmonopoletData.sub_District != null && wineData.vinmonopoletData.sub_District.name != 'Øvrige' && wineData.vinmonopoletData.sub_District.name != '-'">, {{ wineData.vinmonopoletData.sub_District.name }}</span>
             </dd>
             <dt class="col-sm-3">Kan leveres</dt>
             <dd class="col-sm-9">
