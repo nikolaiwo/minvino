@@ -3,13 +3,13 @@
     <b-row>
       <b-col>
         <b-form-select
-          v-model="selectedCategory"
+          :value="selectedCategory"
           :options="wineTableCategories"
-          @change="fetchFilteredData"
+          @change="setSelectedCategory"
         >
           <template #first>
             <b-form-select-option :value="null" disabled
-              >Filter by category</b-form-select-option
+              >Filtrer på kategori</b-form-select-option
             >
           </template>
         </b-form-select>
@@ -17,7 +17,7 @@
       <b-col>
         <b-row class="my-1">
           <b-col sm="5">
-            <label for="input-minimumPoints">Minimum points:</label>
+            <label for="input-minimumPoints">Minimum poeng:</label>
           </b-col>
           <b-col sm="7">
             <b-form-input
@@ -47,6 +47,12 @@
     <template #cell(availableOnline)="row">
       <span v-if="row.value">&#9989;</span><span v-else>&#x274c;</span>
     </template>
+      <template #cell(price)="row">
+        {{row.value}} kr
+      </template>
+      <template #cell(volume)="row">
+        {{row.value}}L
+      </template>
     </b-table>
     <b-spinner v-if="fetchingData" label="Loading..."></b-spinner>
   </div>
@@ -63,29 +69,36 @@ export default {
         {
           key: "name",
           sortable: true,
+          label: "Navn"
         },
         {
           key: "dnPoints",
           sortable: true,
+          label: "Poeng DN"
         },
         {
           key: "apertifPoints",
           sortable: true,
+          label: "Poeng Apertif"
         },
         {
           key: "price",
           sortable: true,
+          label: "Pris"
         },
         {
           key: "category",
           sortable: true,
+          label: "Kategori"
         },
         {
           key: "volume",
+          label: "Volum"
         },
         {
           key: "score",
           sortable: true,
+          label: "Score"
         },
         {
           key: "availableOnline",
@@ -96,7 +109,6 @@ export default {
       selected: [],
       app: null,
       collection: null,
-      selectedCategory: null,
       minimumPoints: 90,
       sortBy:"score",
       sortDesc: true,
@@ -124,6 +136,7 @@ export default {
       wineTableData: (state) => state.db.wineTableData,
       //   wineTableCategories: (state) => state.db.wineTableCategories,
       fetchingData: (state) => state.db.fetchingWineTableData,
+      selectedCategory: (state) => state.db.selectedCategory,
     }),
     filteredWineTableData() {
       let filteredArray = [];
@@ -148,20 +161,25 @@ export default {
     },
     fetchFilteredData() {
       let data = {
-        category: this.selectedCategory,
         minimumPoints: this.minimumPoints,
       };
       this.$store.dispatch("db/fetchBaseWineData", data);
     },
-    inputChange(){
-        console.log("input change")
+    setSelectedCategory(change) {
+        this.$store.commit("db/setSelectedCategory", change)
+        this.$store.dispatch("db/fetchBaseWineData", {
+          minimumPoints: this.minimumPoints,
+        });
     }
   },
-  async created() {
+  async mounted() {
     // this.$store.dispatch("db/fetchWineTableCategories");
-    this.$store.dispatch("db/fetchBaseWineData", {
-      minimumPoints: this.minimumPoints,
-    });
+    console.log(this.wineTableData);
+    if(this.wineTableData.length == 0){
+        this.$store.dispatch("db/fetchBaseWineData", {
+          minimumPoints: this.minimumPoints,
+        });
+    }
   },
 };
 </script>

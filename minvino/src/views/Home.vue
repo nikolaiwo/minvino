@@ -1,7 +1,9 @@
 <template>
   <div>
     <b-container>
-    <WineTable />
+      <keep-alive>
+        <WineTable />
+      </keep-alive>
     </b-container>
   </div>
 </template>

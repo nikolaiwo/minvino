@@ -10,6 +10,7 @@ const state = {
   fetchingWineTableData: false,
   wineData: {},
   fetchingWineData: false,
+  selectedCategory: null,   
 };
 
 const getters = {
@@ -35,8 +36,8 @@ const actions = {
       await commit("setUser", user);
     }
   },
-  async fetchBaseWineData({ dispatch }, {category, minimumPoints}) {
-    if (!category) {
+  async fetchBaseWineData({ dispatch, state }, {minimumPoints }) {
+    if (!state.selectedCategory) {
       let data = {
         query: `
               {
@@ -88,7 +89,7 @@ const actions = {
       };
       dispatch("fetchWineTableData", data);
     } else {
-      console.log("Fetching data for category " + category);
+      console.log("Fetching data for category " + state.selectedCategory);
       let data = {
         query: `
               {
@@ -100,7 +101,7 @@ const actions = {
                               vinmonopoletData: {
                                 buyable: true,
                                 main_category: {
-                                    name: "${category}"
+                                    name: "${state.selectedCategory}"
                                 }
                           }}
                           {
@@ -339,6 +340,9 @@ const mutations = {
   },
   setUser(state, username) {
     state.user = username;
+  },
+  setSelectedCategory(state, category) {
+    state.selectedCategory = category;
   },
   logOut(state) {
     state.user = null;
