@@ -70,6 +70,11 @@ const actions = {
                     },
                     volume {
                         value
+                    },
+                    availability {
+                      deliveryAvailability {
+                        available
+                      }
                     }
                   }
                   dnPoints
@@ -121,6 +126,11 @@ const actions = {
                     },
                     volume {
                         value
+                    },
+                    availability {
+                      deliveryAvailability {
+                        available
+                      }
                     }
                   }
                   dnPoints
@@ -165,6 +175,7 @@ const actions = {
           element.price = element.vinmonopoletData.price.value;
           element.name = element.vinmonopoletData.name;
           element.volume = element.vinmonopoletData.volume.value;
+          element.availableOnline = element.vinmonopoletData.availability.deliveryAvailability.available;
           delete element.vinmonopoletData;
         });
         console.log(response);
@@ -245,9 +256,26 @@ const actions = {
                     main_sub_category {
                       name
                     },
+                    main_country {
+                      name
+                    },
+                    district {
+                      name
+                    },
+                    sub_District {
+                      name
+                    },
                     volume {
                         value
                     }
+                    availability {
+                      storeAvailability {
+                        available
+                      },
+                      deliveryAvailability {
+                        available
+                      }
+                    },
                     url
                   }
               dnPoints
