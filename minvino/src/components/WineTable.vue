@@ -42,8 +42,11 @@
       @row-clicked="viewSingleComponent"
     >
     <template #cell(score)="row">
-        {{ (row.value*100).toFixed(2)}}
-      </template>
+      {{ (row.value*100).toFixed(2) }}
+    </template>
+    <template #cell(availableOnline)="row">
+      <span v-if="row.value">&#9989;</span><span v-else>&#x274c;</span>
+    </template>
     </b-table>
     <b-spinner v-if="fetchingData" label="Loading..."></b-spinner>
   </div>
@@ -84,6 +87,10 @@ export default {
           key: "score",
           sortable: true,
         },
+        {
+          key: "availableOnline",
+          sortable: false,
+        }
       ],
       selectMode: "multi",
       selected: [],

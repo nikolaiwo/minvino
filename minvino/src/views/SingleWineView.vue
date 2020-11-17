@@ -7,7 +7,7 @@
           <dl class="row">
             <dt class="col-sm-3">DN</dt>
             <dd class="col-sm-9">
-                 <div v-if="wineData.dnPoints != ''">
+              <div v-if="wineData.dnPoints != ''">
                 <b>{{ wineData.dnPoints }} Poeng</b> <br />
                 {{ wineData.dnTasteNote }}
               </div>
@@ -31,6 +31,26 @@
               >
                 {{ wineData.vinmonopoletData.name }}
               </a>
+            </dd>
+            <dt class="col-sm-3">Kategori</dt>
+            <dd class="col-sm-9">{{ wineData.vinmonopoletData.main_category.name }}</dd>
+            <dt class="col-sm-3">Volum</dt>
+            <dd class="col-sm-9">{{ wineData.vinmonopoletData.volume.value*100 }} cl</dd>
+            <dt class="col-sm-3">Land, område</dt>
+            <dd class="col-sm-9">
+              {{ wineData.vinmonopoletData.main_country.name }}
+              <span v-if="wineData.vinmonopoletData.district != null">, {{ wineData.vinmonopoletData.district.name }}</span>
+              <span v-if="wineData.vinmonopoletData.sub_District != null">, {{ wineData.vinmonopoletData.sub_District.name }}</span>
+            </dd>
+            <dt class="col-sm-3">Kan leveres</dt>
+            <dd class="col-sm-9">
+              <div v-if="wineData.vinmonopoletData.availability.deliveryAvailability.available">&#9989;</div>
+              <div v-else>&#x274c;</div>
+            </dd>
+            <dt class="col-sm-3">I butikk</dt>
+            <dd class="col-sm-9">
+              <div v-if="wineData.vinmonopoletData.availability.storeAvailability.available">&#9989;</div>
+              <div v-else>&#x274c;</div>
             </dd>
           </dl>
         </b-col>
