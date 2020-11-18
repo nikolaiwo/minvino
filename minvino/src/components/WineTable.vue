@@ -42,16 +42,16 @@
       @row-clicked="viewSingleComponent"
     >
     <template #cell(score)="row">
-      {{ (row.value*100).toFixed(2) }}
+      {{ (row.value*100).toFixed(1) }}
     </template>
     <template #cell(availableOnline)="row">
       <span v-if="row.value">&#9989;</span><span v-else>&#x274c;</span>
     </template>
       <template #cell(price)="row">
-        {{row.value}} kr
+        {{row.value.toFixed(0)}},-
       </template>
       <template #cell(volume)="row">
-        {{row.value}}L
+        {{row.value * 100}} cl
       </template>
     </b-table>
     <b-spinner v-if="fetchingData" label="Loading..."></b-spinner>
@@ -74,12 +74,12 @@ export default {
         {
           key: "dnPoints",
           sortable: true,
-          label: "Poeng DN"
+          label: "DN"
         },
         {
           key: "apertifPoints",
           sortable: true,
-          label: "Poeng Apertif"
+          label: "Aperitif"
         },
         {
           key: "price",
@@ -103,6 +103,7 @@ export default {
         {
           key: "availableOnline",
           sortable: false,
+          label: "Kan leveres"
         }
       ],
       selectMode: "multi",
