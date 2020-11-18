@@ -35,23 +35,25 @@
       responsive="sm"
       hover
       selectable
+      select-mode="single"
       :sort-by.sync="sortBy"
       :sort-desc.sync="sortDesc"
       :items="filteredWineTableData"
       :fields="fields"
-      @row-clicked="viewSingleComponent"
+      @row-clicked="rowClicked"
     >
-    <template #cell(score)="row">
-      {{ (row.value*100).toFixed(1) }}
-    </template>
-    <template #cell(availableOnline)="row">
-      <span v-if="row.value">&#9989;</span><span v-else>&#x274c;</span>
-    </template>
-      <template #cell(price)="row">
-        {{row.value.toFixed(0)}},-
+      <template #cell(score)="row">
+        {{ (row.value * 100).toFixed(1) }}
       </template>
-      <template #cell(volume)="row">
-        {{row.value * 100}} cl
+      <template #cell(availableOnline)="row">
+        <span v-if="row.value">&#9989;</span><span v-else>&#x274c;</span>
+      </template>
+      <template #cell(price)="row"> {{ row.value.toFixed(0) }},- </template>
+      <template #cell(volume)="row"> {{ row.value * 100 }} cl </template>
+      <template #row-details="row">
+        <b-card>
+          <SingleWineView :articleNumber="row.item.productId" />
+        </b-card>
       </template>
     </b-table>
     <b-spinner v-if="fetchingData" label="Loading..."></b-spinner>
@@ -60,60 +62,60 @@
 
 <script>
 import { mapState } from "vuex";
-
+import SingleWineView from "@/views/SingleWineView.vue";
 export default {
   data() {
     return {
-      modes: ["multi", "single", "range"],
       fields: [
         {
           key: "name",
           sortable: true,
-          label: "Navn"
+          label: "Navn",
         },
         {
           key: "dnPoints",
           sortable: true,
-          label: "DN"
+          label: "DN",
         },
         {
           key: "apertifPoints",
           sortable: true,
-          label: "Aperitif"
+          label: "Aperitif",
         },
         {
           key: "price",
           sortable: true,
-          label: "Pris"
+          label: "Pris",
         },
         {
           key: "category",
           sortable: true,
-          label: "Kategori"
+          label: "Kategori",
         },
         {
           key: "volume",
-          label: "Volum"
+          label: "Volum",
         },
         {
           key: "score",
           sortable: true,
-          label: "Score"
+          label: "Score",
         },
         {
           key: "availableOnline",
           sortable: false,
-          label: "Kan leveres"
-        }
+          label: "Kan leveres",
+        },
       ],
       selectMode: "multi",
       selected: [],
       app: null,
       collection: null,
       minimumPoints: 90,
-      sortBy:"score",
+      sortBy: "score",
       sortDesc: true,
       items: [],
+      lastSelected: null,
       wineTableCategories: [
         "Sterkvin",
         "Rødvin",
@@ -131,6 +133,9 @@ export default {
         "Aromatisert vin",
       ],
     };
+  },
+  components: {
+    SingleWineView,
   },
   computed: {
     ...mapState({
@@ -167,19 +172,31 @@ export default {
       this.$store.dispatch("db/fetchBaseWineData", data);
     },
     setSelectedCategory(change) {
-        this.$store.commit("db/setSelectedCategory", change)
-        this.$store.dispatch("db/fetchBaseWineData", {
-          minimumPoints: this.minimumPoints,
-        });
-    }
+      this.$store.commit("db/setSelectedCategory", change);
+      this.$store.dispatch("db/fetchBaseWineData", {
+        minimumPoints: this.minimumPoints,
+      });
+    },
+    rowClicked(item) {
+      item._showDetails = true;
+      console.log(item);
+      console.log(this.lastSelected);
+      if (this.item !== this.lastSelected) {
+        item._showDetails = true;
+      }
+      if (this.lastSelected) {
+        this.lastSelected._showDetails = false;
+      }
+      this.lastSelected = item;
+    },
   },
   async mounted() {
     // this.$store.dispatch("db/fetchWineTableCategories");
     console.log(this.wineTableData);
-    if(this.wineTableData.length == 0){
-        this.$store.dispatch("db/fetchBaseWineData", {
-          minimumPoints: this.minimumPoints,
-        });
+    if (this.wineTableData.length == 0) {
+      this.$store.dispatch("db/fetchBaseWineData", {
+        minimumPoints: this.minimumPoints,
+      });
     }
   },
 };
