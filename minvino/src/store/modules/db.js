@@ -285,6 +285,8 @@ const actions = {
               apertifTasteNote
               score
               productId
+              dnLink
+              apertifLink
             }
           }`,
     };

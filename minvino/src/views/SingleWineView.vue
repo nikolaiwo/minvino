@@ -9,7 +9,7 @@
             <dd class="col-sm-9">
               <div v-if="wineData.dnPoints != ''">
                 <b>{{ wineData.dnPoints }} Poeng</b> <br />
-                {{ wineData.dnTasteNote }}
+                <a :href="wineData.dnLink"> {{ wineData.dnTasteNote }} </a>
               </div>
               <div v-else>Ingen rating funnet</div>
             </dd>
@@ -18,7 +18,7 @@
             <dd class="col-sm-9">
               <div v-if="wineData.apertifPoints != ''">
                 <b>{{ wineData.apertifPoints }} Poeng</b> <br />
-                {{ wineData.apertifTasteNote }}
+                <a :href="wineData.apertifLink"> {{ wineData.apertifTasteNote }} </a>
               </div>
               <div v-else>Ingen rating funnet</div>
             </dd>
