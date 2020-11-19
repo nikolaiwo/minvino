@@ -178,16 +178,19 @@ export default {
       });
     },
     rowClicked(item) {
-      item._showDetails = true;
-      console.log(item);
-      console.log(this.lastSelected);
-      if (this.item !== this.lastSelected) {
+      // Show the details for the row you click on, and hide the last
+      if (item !== this.lastSelected) {
         item._showDetails = true;
       }
       if (this.lastSelected) {
         this.lastSelected._showDetails = false;
       }
-      this.lastSelected = item;
+      // Reset on 'unclick'
+      if(item === this.lastSelected){
+        this.lastSelected = null;
+      } else {
+        this.lastSelected = item;
+      }
     },
   },
   async mounted() {
